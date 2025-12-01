@@ -10,21 +10,17 @@ st.title("🧐 Smilefjes-sjekken")
 st.caption("Sjekk hygienen på spisesteder nær deg. Data fra Mattilsynet.")
 
 # --- API-FUNKSJON ---
-@st.cache_data(ttl=3600) # HUSK: Cache data i 1 time så vi ikke maser på Mattilsynet
+@st.cache_data(ttl=3600)
 def hent_data(sokeord):
-    # Dette er det åpne API-et til Mattilsynet (via Difi)
     url = "https://hotell.difi.no/api/json/mattilsynet/smilefjes/tilsyn"
+    params = {'pagesize': 100}
     
-    # Sjekk om det er postnummer (tall) eller sted (tekst)
-    params = {'pagesize': 100} # Henter de 100 nyeste treffene
-    # Vi bruker 'query' i stedet for 'poststed'.
-    # Da søker den bredt i både navn, adresse og sted. Mye tryggere!
+    # ENDRING: Vi bruker fritekstsøk (query) som fanger opp alt
     params['query'] = sokeord
-         
+        
     try:
         r = requests.get(url, params=params)
-        data = r.json().get('entries', [])
-        return data
+        return r.json().get('entries', [])
     except:
         return []
 
