@@ -17,12 +17,10 @@ def hent_data(sokeord):
     
     # Sjekk om det er postnummer (tall) eller sted (tekst)
     params = {'pagesize': 100} # Henter de 100 nyeste treffene
-    
-    if sokeord.isdigit() and len(sokeord) == 4:
-        params['postnr'] = sokeord
-    else:
-        params['poststed'] = sokeord.upper() # API-et liker STORE BOKSTAVER
-        
+    # Vi bruker 'query' i stedet for 'poststed'.
+    # Da søker den bredt i både navn, adresse og sted. Mye tryggere!
+    params['query'] = sokeord
+         
     try:
         r = requests.get(url, params=params)
         data = r.json().get('entries', [])
